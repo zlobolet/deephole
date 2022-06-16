@@ -16,9 +16,8 @@ if __name__ == '__main__':
     parts_count = 0
     total = 0
     tmp_size = 0
-    # video_url = "https://the-hole.tv/episodes/fastmood-big-russian-legendy-repa"
-    # video_url = "https://the-hole.tv/episodes/fastmood-luka-tvorchestvo-ruslana-belogo"
-    video_url = "https://the-hole.tv/episodes/fastmood-rasul-chabdarov"
+
+    video_url = "https://the-hole.tv/episodes/istorii-zvezda"
 
     print("Hello")
 
@@ -28,12 +27,12 @@ if __name__ == '__main__':
     val = soup.find('div', class_='relative h-full w-full')
 
     if val is None:
-        print ("Wrong url")
+        print("Wrong url")
         sys.exit()
 
     data = json.loads(str(val['data-player-ad-value']))
     if data is None:
-        print ("Wrong data")
+        print("Wrong data")
         sys.exit()
 
     m3u8 = str(val['data-player-source-value'])
@@ -57,7 +56,6 @@ if __name__ == '__main__':
     for line in lines.splitlines():
         pos = line.find("iframes-")
         if pos != -1:
-            # print("line - " + line+" pos = " + str(pos))
             t = line.find(l852x428)
             if t != -1:
                 f852x428 = line[pos + 8:pos + 16 + 8]
@@ -72,15 +70,14 @@ if __name__ == '__main__':
             if t != -1:
                 f640x360 = line[pos + 8:pos + 16 + 8]
                 print(str(l640x360) + " " + f640x360)
-    # sys.exit(0)
 
     video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
 
     if (video_id is None) or (video_id == ""):
-        print ("Wrong data")
+        print("Wrong data")
         sys.exit()
 
-    with open(title+'.ts', 'wb') as merged:
+    with open("f:\\thehole\\"+title+'.ts', 'wb') as merged:
         while True:
 
             fn = str(counter)
@@ -115,11 +112,3 @@ if __name__ == '__main__':
                 break
             parts_count += 1
             counter += 1
-
-
-
-
-
-    #       # url = "https://video-cdn.the-hole.tv/episodes/2e0b625d-3088-4f67-8724-d9809c75687d/segment-" + str(counter) + "-sa4c575c5d-v1-a1.ts"
-    #       # url = "https://video-cdn.the-hole.tv/episodes/2dcb67bf-6a4a-4e77-ab4e-1e5483127335/segment-" + str(counter) + "-sd313a6d65-v1-a1.ts"
-            #        https://video-cdn.the-hole.tv/episodes/2dcb67bf-6a4a-4e77-ab4e-1e5483127335-1-s693e886c6-v1-a1.ts
