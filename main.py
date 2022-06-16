@@ -17,7 +17,8 @@ if __name__ == '__main__':
     total = 0
     tmp_size = 0
     # video_url = "https://the-hole.tv/episodes/fastmood-big-russian-legendy-repa"
-    video_url = "https://the-hole.tv/episodes/fastmood-luka-tvorchestvo-ruslana-belogo"
+    # video_url = "https://the-hole.tv/episodes/fastmood-luka-tvorchestvo-ruslana-belogo"
+    video_url = "https://the-hole.tv/episodes/fastmood-rasul-chabdarov"
 
     print("Hello")
 
