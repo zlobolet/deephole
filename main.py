@@ -8,6 +8,12 @@ import shutil
 from urllib.parse import urlparse
 import urllib.request
 
+
+def die():
+    input("Press enter to exit")
+    sys.exit(-1)
+
+
 # Go
 video_url = input("URL: ")
 
@@ -16,11 +22,11 @@ try:
     page = requests.get(video_url)
 except Exception as e:
     print(str(e))
-    sys.exit(1)
+    die()
 
 if page.status_code != 200:
     print("Error " + str(page.status_code))
-    sys.exit(1)
+    die()
 
 # Parse
 soup = BeautifulSoup(page.text, 'html.parser')
@@ -28,25 +34,25 @@ val = soup.find('div', class_='relative h-full w-full')
 
 if val is None:
     print("Wrong url")
-    sys.exit(1)
+    die()
 
 # Value
 data = json.loads(str(val['data-player-ad-value']))
 if data is None:
     print("Wrong data")
-    sys.exit(1)
+    die()
 
 # m3u8 URL
 m3u8 = str(val['data-player-source-value'])
 if m3u8 is None:
     print("Wrong data (no m3u8 url)")
-    sys.exit(1)
+    die()
 
 # Video title
 title = str(val['data-player-title-value'])
 if title is None:
     print("Wrong data (no title)")
-    sys.exit(1)
+    die()
 print(title)
 
 # Video resolution
@@ -54,7 +60,7 @@ try:
     m3u8_file = requests.get(m3u8)
 except ImportError:
     print("Can't load m3u8_file")
-    sys.exit(1)
+    die()
 
 # Read resolutions
 lines = str(m3u8_file.text)
@@ -79,7 +85,7 @@ for line in lines.splitlines():
 
 if not video_exist:
     print("No video available")
-    sys.exit(1)
+    die()
 
 counter = 0
 for video_counter in videos:
@@ -93,7 +99,7 @@ video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
 
 if (video_id is None) or (video_id == ""):
     print("Wrong video ID")
-    sys.exit(1)
+    die()
 
 output_file = input("Input filename [ENTER] for \"" + title + ".ts\": ")
 if output_file is None or output_file == "":
@@ -103,7 +109,7 @@ else:
 
 if exists(output_file):
     print("File " + str(output_file) + " already exist")
-    sys.exit(1)
+    die()
 
 counter = 1
 parts_count = 0
@@ -111,7 +117,6 @@ total = 0
 tmp_size = 0
 
 # Write file
-
 dir_name = "hole_tmp"
 if not os.path.isdir(dir_name):
     os.mkdir(dir_name)
