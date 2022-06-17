@@ -158,8 +158,10 @@ total = 0
 tmp_size = 0
 
 # Write file
-if not os.path.isdir("tmp"):
-    os.mkdir("tmp")
+
+dir_name = "hole_tmp"
+if not os.path.isdir(dir_name):
+    os.mkdir(dir_name)
 
 with open(output_file, 'wb') as merged:
     while True:
@@ -167,7 +169,7 @@ with open(output_file, 'wb') as merged:
         fn = str(counter)
         for i in range(len(str(counter)), 9):
             fn = "0" + fn
-        fn = "tmp/" + fn + ".ts"
+        fn = dir_name+"/" + fn + ".ts"
 
         url = "https://video-cdn.the-hole.tv/episodes/" + video_id + "/segment-" + str(counter) + "-" + str(
             res_url) + ".ts"
@@ -189,6 +191,8 @@ with open(output_file, 'wb') as merged:
         else:
             print("Finish")
             print(str(round(total, 2)) + " MB")
+            if os.path.isdir(dir_name):
+                os.rmdir(dir_name)
             break
         parts_count += 1
         counter += 1

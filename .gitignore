@@ -1,3 +1,6 @@
 *.ts
 .idea/
+build
+tmp
+*.spec
 *.code-workspace
