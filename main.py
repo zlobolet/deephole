@@ -9,23 +9,23 @@ from urllib.parse import urlparse
 import urllib.request
 
 
-def getVideoRes():
-    if (f852x428):
+def getvideores():
+    if f852x428:
         print("1: 852x428")
     else:
         print("none : 852x428")
 
-    if (f1920x1080):
+    if f1920x1080:
         print("2: 1920x1080")
     else:
         print("none : 1920x1080")
 
-    if (f1280x720):
+    if f1280x720:
         print("3: 1280x720")
     else:
         print("none : 1280x720")
 
-    if (f640x360):
+    if f640x360:
         print("4: 640x360")
     else:
         print("none : 640x360")
@@ -74,10 +74,10 @@ if title is None:
 
 print(title)
 
-# Video video resolution
+# Video resolution
 try:
     m3u8_file = requests.get(m3u8)
-except:
+except ImportError:
     print("Can't load m3u8_file")
     sys.exit(1)
 
@@ -111,29 +111,29 @@ for line in lines.splitlines():
         if t != -1:
             f640x360 = line[pos + 8:pos + 24]
 
-if video_exist == False:
+if not video_exist:
     print("No video available")
     sys.exit(1)
 
 res_url = ""
-res = int(getVideoRes())
+res = int(getvideores())
 
-if (int(res) < 1 or int(res) > 4):
+if int(res) < 1 or int(res) > 4:
     print("Wrong")
     sys.exit(1)
 
-if (res == 1 and f852x428 == None) or (res == 2 and f1920x1080 == None) or (res == 3 and f1280x720 == None) or (
-        res == 4 and f640x360 == None):
+if (res == 1 and f852x428 is None) or (res == 2 and f1920x1080 is None) or (res == 3 and f1280x720 is None) or (
+        res == 4 and f640x360 is None):
     print("Wrong")
     sys.exit(1)
 
-if (res == 1):
+if res == 1:
     res_url = f852x428
-elif (res == 2):
+elif res == 2:
     res_url = f1920x1080
-elif (res == 3):
+elif res == 3:
     res_url = f1280x720
-elif (res == 4):
+elif res == 4:
     res_url = f640x360
 
 video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
@@ -143,12 +143,12 @@ if (video_id is None) or (video_id == ""):
     sys.exit(1)
 
 output_file = input("Input filename [ENTER] for \"" + title + ".ts\": ")
-if (output_file == None or output_file == ""):
+if output_file is None or output_file == "":
     output_file = str(title) + ".ts"
 else:
     output_file = str(output_file) + ".ts"
 
-if (exists(output_file)):
+if exists(output_file):
     print("File " + str(output_file) + " already exist")
     sys.exit(1)
 
@@ -158,7 +158,7 @@ total = 0
 tmp_size = 0
 
 # Write file
-if (os.path.isdir("tmp") == False):
+if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
 with open(output_file, 'wb') as merged:
