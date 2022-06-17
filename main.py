@@ -47,7 +47,6 @@ title = str(val['data-player-title-value'])
 if title is None:
     print("Wrong data (no title)")
     sys.exit(1)
-
 print(title)
 
 # Video resolution
@@ -57,53 +56,36 @@ except ImportError:
     print("Can't load m3u8_file")
     sys.exit(1)
 
-lines = str(m3u8_file.text)
-
 # Read resolutions
-l852x428 = "852x4801"
-f852x428 = None
-l1920x1080 = "1920x1080"
-f1920x1080 = None
-l1280x720 = "1280x720"
-f1280x720 = None
-l640x360 = "640x360"
-f640x360 = None
-
+lines = str(m3u8_file.text)
 video_exist = False
 videos = []
 
 for line in lines.splitlines():
     pos = line.find("iframes-")
+    resol = ""
+    vid_id = ""
     if pos != -1:
-        video_exist = True
-        c = 1
-        t = line.find(l852x428)
-        if t != -1:
-            f852x428 = line[pos + 8:pos + 24]
-            videos.append([l852x428, f852x428])
-        t = line.find(l1920x1080)
-        if t != -1:
-            f1920x1080 = line[pos + 8:pos + 24]
-            videos.append([l1920x1080, f1920x1080])
-        t = line.find(l1280x720)
-        if t != -1:
-            f1280x720 = line[pos + 8:pos + 24]
-            videos.append([l1280x720, f1280x720])
-        t = line.find(l640x360)
-        if t != -1:
-            f640x360 = line[pos + 8:pos + 24]
-            videos.append([l640x360, f640x360])
+        s = line.split(",")
+        for ss in s:
+            if ss.find("RESOLUTION=") != -1:
+                resol = ss.replace("RESOLUTION=", "")
+
+        vid_id = line[pos + 8:pos + 24]
+        print(str(resol) + " " + str(vid_id))
+        videos.append([str(resol), str(vid_id)])
+        if str(resol) != "" and str(vid_id) != "":
+            video_exist = True
 
 if not video_exist:
     print("No video available")
     sys.exit(1)
 
-c = 0
+counter = 0
 for video_counter in videos:
-    c += 1
-    print(str(c) + ": " + str(video_counter[0]))
-res = int(input("Select resolution: "))-1
-
+    counter += 1
+    print(str(counter) + ": " + str(video_counter[0]))
+res = int(input("Select resolution: ")) - 1
 
 res_url = videos[res][1]
 
