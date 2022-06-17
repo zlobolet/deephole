@@ -8,31 +8,7 @@ import shutil
 from urllib.parse import urlparse
 import urllib.request
 
-
-def getvideores():
-    if f852x428:
-        print("1: 852x428")
-    else:
-        print("none : 852x428")
-
-    if f1920x1080:
-        print("2: 1920x1080")
-    else:
-        print("none : 1920x1080")
-
-    if f1280x720:
-        print("3: 1280x720")
-    else:
-        print("none : 1280x720")
-
-    if f640x360:
-        print("4: 640x360")
-    else:
-        print("none : 640x360")
-
-    return input("Select resolution: ")
-
-
+# Go
 video_url = input("URL: ")
 
 # Get page url
@@ -84,7 +60,7 @@ except ImportError:
 lines = str(m3u8_file.text)
 
 # Read resolutions
-l852x428 = "852x480"
+l852x428 = "852x4801"
 f852x428 = None
 l1920x1080 = "1920x1080"
 f1920x1080 = None
@@ -92,49 +68,44 @@ l1280x720 = "1280x720"
 f1280x720 = None
 l640x360 = "640x360"
 f640x360 = None
+
 video_exist = False
+videos = []
 
 for line in lines.splitlines():
     pos = line.find("iframes-")
     if pos != -1:
         video_exist = True
+        c = 1
         t = line.find(l852x428)
         if t != -1:
             f852x428 = line[pos + 8:pos + 24]
+            videos.append([l852x428, f852x428])
         t = line.find(l1920x1080)
         if t != -1:
             f1920x1080 = line[pos + 8:pos + 24]
+            videos.append([l1920x1080, f1920x1080])
         t = line.find(l1280x720)
         if t != -1:
             f1280x720 = line[pos + 8:pos + 24]
+            videos.append([l1280x720, f1280x720])
         t = line.find(l640x360)
         if t != -1:
             f640x360 = line[pos + 8:pos + 24]
+            videos.append([l640x360, f640x360])
 
 if not video_exist:
     print("No video available")
     sys.exit(1)
 
-res_url = ""
-res = int(getvideores())
+c = 0
+for video_counter in videos:
+    c += 1
+    print(str(c) + ": " + str(video_counter[0]))
+res = int(input("Select resolution: "))-1
 
-if int(res) < 1 or int(res) > 4:
-    print("Wrong")
-    sys.exit(1)
 
-if (res == 1 and f852x428 is None) or (res == 2 and f1920x1080 is None) or (res == 3 and f1280x720 is None) or (
-        res == 4 and f640x360 is None):
-    print("Wrong")
-    sys.exit(1)
-
-if res == 1:
-    res_url = f852x428
-elif res == 2:
-    res_url = f1920x1080
-elif res == 3:
-    res_url = f1280x720
-elif res == 4:
-    res_url = f640x360
+res_url = videos[res][1]
 
 video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
 
@@ -169,7 +140,7 @@ with open(output_file, 'wb') as merged:
         fn = str(counter)
         for i in range(len(str(counter)), 9):
             fn = "0" + fn
-        fn = dir_name+"/" + fn + ".ts"
+        fn = dir_name + "/" + fn + ".ts"
 
         url = "https://video-cdn.the-hole.tv/episodes/" + video_id + "/segment-" + str(counter) + "-" + str(
             res_url) + ".ts"
