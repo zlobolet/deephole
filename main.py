@@ -18,6 +18,7 @@ def die():
 video_url = input("URL: ")
 
 # Get page url
+page = None
 try:
     page = requests.get(video_url)
 except Exception as e:
@@ -56,6 +57,7 @@ if title is None:
 print(title)
 
 # Video resolution
+m3u8_file = ""
 try:
     m3u8_file = requests.get(m3u8)
 except ImportError:
