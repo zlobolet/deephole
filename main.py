@@ -1,3 +1,5 @@
+import subprocess
+
 import requests
 import sys
 import os
@@ -142,17 +144,29 @@ with open(output_file, 'wb') as merged:
 
             with open(fn, 'rb') as mergefile:
                 shutil.copyfileobj(mergefile, merged)
-
             tmp_size = os.path.getsize(fn) / 1048576
             if os.path.exists(fn):
                 os.remove(fn)
             print(str(parts_count) + " - " + fn + " - " + str(round(tmp_size, 2)))
             total += tmp_size
         else:
+            mergefile.close()
             print("Finish")
             print(str(round(total, 2)) + " MB")
             if os.path.isdir(dir_name):
                 os.rmdir(dir_name)
+            y = input("Convert to Matroska (.mkv)? [y/N]: ")
+            if y == "y" or y == "Y" or y == "Yes":
+                print("Converting...")
+                subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".mkv")])
+            y = input("Convert to MPEG-4 (.mp4)? [y/N]: ")
+            if y == "y" or y == "Y" or y == "Yes":
+                print("Converting...")
+                subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".mp4")])
+            y = input("Convert to AVI (.avi)? [y/N]: ")
+            if y == "y" or y == "Y" or y == "Yes":
+                print("Converting...")
+                subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".avi")])
             break
         parts_count += 1
         counter += 1

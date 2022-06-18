@@ -1,4 +1,7 @@
 *.ts
+*.avi
+*.mp4
+*.mkv
 .idea/
 build/
 tmp/
