@@ -11,7 +11,9 @@ from urllib.parse import urlparse
 import urllib.request
 
 
-def die():
+def die(mes):
+    if mes is not None:
+        print(mes)
     input("Press enter to exit")
     sys.exit(-1)
 
@@ -24,38 +26,32 @@ page = None
 try:
     page = requests.get(video_url)
 except Exception as e:
-    print(str(e))
-    die()
+    die(str(e))
 
 if page.status_code != 200:
-    print("Error " + str(page.status_code))
-    die()
+    die("Error " + str(page.status_code))
 
 # Parse
 soup = BeautifulSoup(page.text, 'html.parser')
 val = soup.find('div', class_='relative h-full w-full')
 
 if val is None:
-    print("Wrong url")
-    die()
+    die("Wrong url")
 
 # Value
 data = json.loads(str(val['data-player-ad-value']))
 if data is None:
-    print("Wrong data")
-    die()
+    die("Wrong data")
 
 # m3u8 URL
 m3u8 = str(val['data-player-source-value'])
 if m3u8 is None:
-    print("Wrong data (no m3u8 url)")
-    die()
+    die("Wrong data (no m3u8 url)")
 
 # Video title
 title = str(val['data-player-title-value'])
 if title is None:
-    print("Wrong data (no title)")
-    die()
+    die("Wrong data (no title)")
 print(title)
 
 # Video resolution
@@ -63,8 +59,7 @@ m3u8_file = ""
 try:
     m3u8_file = requests.get(m3u8)
 except ImportError:
-    print("Can't load m3u8_file")
-    die()
+    die("Can't load m3u8_file")
 
 # Read resolutions
 lines = str(m3u8_file.text)
@@ -88,8 +83,7 @@ for line in lines.splitlines():
             video_exist = True
 
 if not video_exist:
-    print("No video available")
-    die()
+    die("No video available")
 
 counter = 0
 for video_counter in videos:
@@ -102,8 +96,7 @@ res_url = videos[res][1]
 video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
 
 if (video_id is None) or (video_id == ""):
-    print("Wrong video ID")
-    die()
+    die("Wrong video ID")
 
 output_file = input("Input filename [ENTER] for \"" + title + ".ts\": ")
 if output_file is None or output_file == "":
@@ -112,8 +105,7 @@ else:
     output_file = str(output_file) + ".ts"
 
 if exists(output_file):
-    print("File " + str(output_file) + " already exist")
-    die()
+    die("File " + str(output_file) + " already exist")
 
 counter = 1
 parts_count = 0
@@ -121,8 +113,8 @@ total = 0
 tmp_size = 0
 
 # Write file
-dir_name = "hole_tmp"
-if not os.path.isdir(dir_name):
+
+if not os.path.isdir(dir_name := "hole_tmp"):
     os.mkdir(dir_name)
 
 with open(output_file, 'wb') as merged:
@@ -159,14 +151,17 @@ with open(output_file, 'wb') as merged:
             if y == "y" or y == "Y" or y == "Yes":
                 print("Converting...")
                 subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".mkv")])
+                print(str(round(int(os.path.getsize(output_file.replace(".ts", ".mkv")) / 1048576), 2)) + " MB")
             y = input("Convert to MPEG-4 (.mp4)? [y/N]: ")
             if y == "y" or y == "Y" or y == "Yes":
                 print("Converting...")
                 subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".mp4")])
+                print(str(round(int(os.path.getsize(output_file.replace(".ts", ".mp4")) / 1048576), 2)) + " MB")
             y = input("Convert to AVI (.avi)? [y/N]: ")
             if y == "y" or y == "Y" or y == "Yes":
                 print("Converting...")
                 subprocess.run(['ffmpeg', '-i', output_file, output_file.replace(".ts", ".avi")])
+                print(str(round(int(os.path.getsize(output_file.replace(".ts", ".avi")) / 1048576), 2)) + " MB")
             break
         parts_count += 1
         counter += 1
