@@ -14,7 +14,7 @@ import urllib.request
 def die(mes):
     if mes is not None:
         print(mes)
-    input("Press enter to exit")
+    input("Press Enter to exit")
     sys.exit(-1)
 
 
@@ -113,7 +113,6 @@ total = 0
 tmp_size = 0
 
 # Write file
-
 if not os.path.isdir(dir_name := "hole_tmp"):
     os.mkdir(dir_name)
 
@@ -139,7 +138,7 @@ with open(output_file, 'wb') as merged:
             tmp_size = os.path.getsize(fn) / 1048576
             if os.path.exists(fn):
                 os.remove(fn)
-            print(str(parts_count) + " - " + fn + " - " + str(round(tmp_size, 2)))
+            print(str(parts_count+1) + " - " + fn + " - " + str(round(tmp_size, 2)) + " MB")
             total += tmp_size
         else:
             mergefile.close()
