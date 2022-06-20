@@ -2,9 +2,11 @@
 *.avi
 *.mp4
 *.mkv
+*.exe
 .idea/
 build/
-tmp/
+hole_tmp/
 dist/
 *.spec
 *.code-workspace
+venv/
