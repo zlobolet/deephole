@@ -6,12 +6,37 @@ import json
 import shutil
 from urllib.parse import urlparse
 import urllib.request
-from holem3u8ex import die, get_max_segment
 
-# Go
+
+def die(mes):
+    if mes is not None:
+        print(mes)
+    input("Enter to exit")
+    sys.exit(-1)
+
+
+def get_max_segment(vid, r_url):
+    m3file = None
+    cnt = 0
+    ur = "https://video-cdn.the-hole.tv/episodes/" + vid + "/iframes-" + r_url + ".m3u8"
+    try:
+        m3file = requests.get(ur)
+    except ImportError:
+        die("Can't load m3u8_file")
+    lns = str(m3file.text)
+    for ln in reversed(lns.splitlines()):
+        if ln.find("segment-") != -1:
+            ln = ln.replace("segment-", "")
+            ln = ln.replace(".ts", "")
+            ln = ln.replace(r_url, "")
+            ln = ln.replace("-", "")
+            cnt = int(ln)
+            break
+    return cnt
+
+
 video_url = input("URL: ")
 
-# Get page url
 page = None
 try:
     page = requests.get(video_url)
@@ -20,35 +45,32 @@ except Exception as e:
 if page.status_code != 200:
     die("Error " + str(page.status_code))
 
-# Parse
 soup = BeautifulSoup(page.text, 'html.parser')
 val = soup.find('div', class_='relative h-full w-full')
 if val is None:
     die("Wrong url")
 
-# Value
 data = json.loads(str(val['data-player-ad-value']))
 if data is None:
     die("Wrong data")
 
-# m3u8 URL
 m3u8 = str(val['data-player-source-value'])
 if m3u8 is None:
     die("Wrong data (no m3u8 url)")
 
-# Video title
+
 title = str(val['data-player-title-value'])
 if title is None:
     die("Wrong data (no title)")
 
-# Video resolution
+
 m3u8_file = ""
 try:
     m3u8_file = requests.get(m3u8)
 except ImportError:
     die("Can't load m3u8_file")
 
-    # Read resolutions
+
 lines = str(m3u8_file.text)
 video_exist = False
 videos = []
@@ -70,20 +92,20 @@ for line in lines.splitlines():
 if not video_exist:
     die("No video available")
 
-# Get resolution
+
 counter = 0
 for video_counter in videos:
     counter += 1
     print(str(counter) + ": " + str(video_counter[0]))
 res = int(input("Select resolution: ")) - 1
 
-# Get video part id
+
 res_url = videos[res][1]
 video_id = urlparse(data["preroll"]['url']).query.replace("episode_id=", "")
 if (video_id is None) or (video_id == ""):
     die("Wrong video ID")
 
-# Output file name
+
 output_file = input("Input filename [ENTER] for \"" + title + ".ts\": ")
 if output_file is None or output_file == "":
     output_file = str(title) + ".ts"
@@ -94,7 +116,6 @@ if os.path.exists(output_file):
     die("File " + str(output_file) + " already exist")
 
 
-# Write file
 total = 0
 tmp_size = 0
 if not os.path.isdir(dir_name := "hole_tmp"):
@@ -133,7 +154,7 @@ with open(output_file, 'wb') as merged:
     if os.path.isdir(dir_name):
         os.rmdir(dir_name)
 
-    # Converting
+
     y = input("Convert to Matroska (.mkv)? [y/N]: ")
     if y == "y" or y == "Y" or y == "Yes":
         print("Converting...")
